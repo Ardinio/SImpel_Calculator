@@ -1,105 +1,104 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace SImpel_Calculator;
 
-class Program
+class CalculatorApp : Form
 {
-    static void Main(string[] args)
+    private TextBox num1TextBox;
+    private TextBox num2TextBox;
+    private Button addButton;
+    private Button subtractButton;
+    private Button multiplyButton;
+    private Button divideButton;
+    private Label resultLabel;
+
+    public CalculatorApp()
     {
-        Console.WriteLine("Welcome to the Calculator App!");
-
-        int num1 = ReadIntegerInput("Enter the first number: ");
-        int num2 = ReadIntegerInput("Enter the second number: ");
-
-        Console.WriteLine("Choose an operation:");
-        Console.WriteLine("1. Addition");
-        Console.WriteLine("2. Subtraction");
-        Console.WriteLine("3. Multiplication");
-        Console.WriteLine("4. Division");
-
-        int operationChoice = ReadOperationChoice();
-
-        int result = PerformOperation(num1, num2, operationChoice);
-
-        int sum = num1 + num2;
-        
-        Console.WriteLine("The result is: " + result);
-
-        Console.WriteLine("Press any key to exit.");
-        Console.ReadKey();
+        InitializeComponents();
     }
 
-    static int ReadIntegerInput(string message)
+    private void InitializeComponents() 
     {
-        int number;
-        bool isValidInput = false;
+        num1TextBox = new TextBox();
+        num1TextBox.Location = new System.Drawing.Point(20, 20);
+        this.Controls.Add(num1TextBox);
 
-        // This loop will run atlest one time because the condition is checked after it has been executed.
-        do
-        {
-            Console.Write(message);
-            string? input = Console.ReadLine();
+        num2TextBox = new TextBox();
+        num2TextBox.Location = new System.Drawing.Point(20, 50);
+        this.Controls.Add(num2TextBox);
 
-            // Will convert the input to an int and check if it is an number.
-            isValidInput = int.TryParse(input, out number);
+        addButton = new Button();
+        addButton.Location = new System.Drawing.Point(20, 80);
+        addButton.Text = "+";
+        addButton.Click += AddButton_Click;
+        this.Controls.Add(addButton);
 
-            if (!isValidInput)
-            {
-                Console.WriteLine("Invalid input. Please enter a valid integer.");
-            }
-        }
-        while (!isValidInput);
+        subtractButton = new Button();
+        subtractButton.Location = new System.Drawing.Point(100, 80);
+        subtractButton.Text = "-";
+        subtractButton.Click += SubtractButton_Click;
+        this.Controls.Add(subtractButton);
 
-        return number;
+        multiplyButton = new Button();
+        multiplyButton.Location = new System.Drawing.Point(20, 110);
+        multiplyButton.Text = "*";
+        multiplyButton.Click += MulitplyButton_Click;
+        this.Controls.Add(multiplyButton);
+
+        divideButton = new Button();
+        divideButton.Location = new System.Drawing.Point(100, 110);
+        divideButton.Text = "/";
+        divideButton.Click += DivideButton_Click;
+        this.Controls.Add(divideButton);
+
+        resultLabel = new Label();
+        resultLabel.Location = new System.Drawing.Point(20, 140);
+        this.Controls.Add(resultLabel);
     }
 
-    static int ReadOperationChoice()
+    private void AddButton_Click(object sender, EventArgs e)
     {
-        int operationChoice;
-        bool isValidChoice = false;
-
-        do
-        {
-            string? input = Console.ReadLine();
-            isValidChoice = int.TryParse(input, out operationChoice);
-
-            if (!isValidChoice || operationChoice < 1 || operationChoice > 4)
-            {
-                Console.WriteLine("Invalid input. Please enter a valid operation choice (1-4).");
-            }
-        }
-        while (!isValidChoice || operationChoice < 1 || operationChoice > 4);
-
-        return operationChoice;
+        int num1 = Convert.ToInt32(num1TextBox.Text);
+        int num2 = Convert.ToInt32(num2TextBox.Text);
+        int result = num1 + num2;
+        resultLabel.Text = "Result: " + result.ToString();
     }
 
-    static int PerformOperation(int num1, int num2, int operationChoice)
+    private void SubtractButton_Click(object sender, EventArgs e)
     {
-        int result = 0;
+        int num1 = Convert.ToInt32(num1TextBox.Text);
+        int num2 = Convert.ToInt32(num2TextBox.Text);
+        int result = num1 - num2;
+        resultLabel.Text = "Result: " + result.ToString();
+    }
 
-        switch (operationChoice)
+    private void MulitplyButton_Click(object sender, EventArgs e)
+    {
+        int num1 = Convert.ToInt32(num1TextBox.Text);
+        int num2 = Convert.ToInt32(num2TextBox.Text);
+        int result = num1 * num2;
+        resultLabel.Text = "Result: " + result.ToString();
+    }
+
+    private void DivideButton_Click(object sender, EventArgs e)
+    {
+        int num1 = Convert.ToInt32(num1TextBox.Text);
+        int num2 = Convert.ToInt32(num2TextBox.Text);
+
+        if (num2 != 0)
         {
-            case 1: // Addition
-                result = num1 + num2;
-                break;
-            case 2: // Subtraction
-                result = num1 - num2;
-                break;
-            case 3: // Multiplication
-                result = num1 * num2;
-                break;
-            case 4: // Division
-                if (num2 != 0)
-                {
-                    result = num1 / num2; 
-                }
-                else
-                {
-                    Console.WriteLine("Error: Cannot divide by zero.");
-                }
-                break;
+            int result = num1 / num2;
+            resultLabel.Text = "Result: " + result.ToString();
         }
+        else
+        {
+            resultLabel.Text ="Error: Cannot divide by zero.";
+        }
+    }
 
-        return result;
+    static void Main()
+    {
+        Application.Run(new CalculatorApp());
     }
 }
