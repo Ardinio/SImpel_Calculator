@@ -28,28 +28,24 @@ class CalculatorApp : Form
         num2TextBox.Location = new System.Drawing.Point(20, 50);
         this.Controls.Add(num2TextBox);
 
-        addButton = new Button();
+        addButton = CreateOperationButton("+");
         addButton.Location = new System.Drawing.Point(20, 80);
-        addButton.Text = "+";
-        addButton.Click += AddButton_Click;
+        addButton.Click += OperationButton_Click;
         this.Controls.Add(addButton);
 
-        subtractButton = new Button();
+        subtractButton = CreateOperationButton("-");
         subtractButton.Location = new System.Drawing.Point(100, 80);
-        subtractButton.Text = "-";
-        subtractButton.Click += SubtractButton_Click;
+        subtractButton.Click += OperationButton_Click;
         this.Controls.Add(subtractButton);
 
-        multiplyButton = new Button();
+        multiplyButton = CreateOperationButton("*");
         multiplyButton.Location = new System.Drawing.Point(20, 110);
-        multiplyButton.Text = "*";
-        multiplyButton.Click += MulitplyButton_Click;
+        multiplyButton.Click += OperationButton_Click;
         this.Controls.Add(multiplyButton);
 
-        divideButton = new Button();
+        divideButton = CreateOperationButton("/");
         divideButton.Location = new System.Drawing.Point(100, 110);
-        divideButton.Text = "/";
-        divideButton.Click += DivideButton_Click;
+        divideButton.Click += OperationButton_Click;
         this.Controls.Add(divideButton);
 
         resultLabel = new Label();
@@ -57,44 +53,49 @@ class CalculatorApp : Form
         this.Controls.Add(resultLabel);
     }
 
-    private void AddButton_Click(object sender, EventArgs e)
+    private Button CreateOperationButton(string text)
     {
-        int num1 = Convert.ToInt32(num1TextBox.Text);
-        int num2 = Convert.ToInt32(num2TextBox.Text);
-        int result = num1 + num2;
-        resultLabel.Text = "Result: " + result.ToString();
+        var button = new Button();
+        button.Text = text;
+        button.Width = 30;
+        button.Height = 30;
+        button.Font = new System.Drawing.Font(button.Font.FontFamily, 12);
+        return button;
     }
 
-    private void SubtractButton_Click(object sender, EventArgs e)
+    private void OperationButton_Click(object sender, EventArgs e)
     {
-        int num1 = Convert.ToInt32(num1TextBox.Text);
-        int num2 = Convert.ToInt32(num2TextBox.Text);
-        int result = num1 - num2;
-        resultLabel.Text = "Result: " + result.ToString();
-    }
-
-    private void MulitplyButton_Click(object sender, EventArgs e)
-    {
-        int num1 = Convert.ToInt32(num1TextBox.Text);
-        int num2 = Convert.ToInt32(num2TextBox.Text);
-        int result = num1 * num2;
-        resultLabel.Text = "Result: " + result.ToString();
-    }
-
-    private void DivideButton_Click(object sender, EventArgs e)
-    {
+        Button button = (Button)sender;
+        string operation = button.Text;
         int num1 = Convert.ToInt32(num1TextBox.Text);
         int num2 = Convert.ToInt32(num2TextBox.Text);
 
-        if (num2 != 0)
+        int result = 0;
+        switch (operation)
         {
-            int result = num1 / num2;
-            resultLabel.Text = "Result: " + result.ToString();
+            case "+": // Addition
+                result = num1 + num2;
+                break;
+            case "-": // Subtraction
+                result = num1 - num2;
+                break;
+            case "*": // Multiplication
+                result = num1 * num2;
+                break;
+            case "/": // Division
+                if (num2 != 0)
+                {
+                    result = num1 / num2;
+                }
+                else
+                {
+                    resultLabel.Text = "Error: Cannot divide by zero.";
+                    return;
+                }
+                break;
         }
-        else
-        {
-            resultLabel.Text ="Error: Cannot divide by zero.";
-        }
+
+        resultLabel.Text = "Result: " + result.ToString();
     }
 
     static void Main()
