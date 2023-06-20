@@ -1,32 +1,36 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SImpel_Calculator;
-
 class CalculatorApp : Form
 {
-    private TextBox num1TextBox;
-    private TextBox num2TextBox;
+    private Button[] numberButtons;
     private Button addButton;
     private Button subtractButton;
     private Button multiplyButton;
     private Button divideButton;
+    private Button equalsButton;
+    private Button resetButton;
     private Label resultLabel;
+
+    private string num1Input;
+    private string num2Input;
+    private string currentOperation;
 
     public CalculatorApp()
     {
         InitializeComponents();
     }
 
-    private void InitializeComponents() 
+    private void InitializeComponents()
     {
-        num1TextBox = new TextBox();
-        num1TextBox.Location = new System.Drawing.Point(20, 20);
-        this.Controls.Add(num1TextBox);
-
-        num2TextBox = new TextBox();
-        num2TextBox.Location = new System.Drawing.Point(20, 50);
-        this.Controls.Add(num2TextBox);
+        numberButtons = new Button[10];
+        for (int i = 0; i < 10; i++)
+        {
+            numberButtons[i] = CreateNumberButton(i.ToString());
+            numberButtons[i].Location = new System.Drawing.Point(20 + (i % 3) * 40, 140 + (i / 3) * 40);
+            numberButtons[i].Click += NumberButton_Click;
+            this.Controls.Add(numberButtons[i]);
+        }
 
         addButton = CreateOperationButton("+");
         addButton.Location = new System.Drawing.Point(20, 80);
@@ -48,9 +52,42 @@ class CalculatorApp : Form
         divideButton.Click += OperationButton_Click;
         this.Controls.Add(divideButton);
 
+        equalsButton = new Button();
+        equalsButton.Text = "=";
+        equalsButton.Width = 30;
+        equalsButton.Height = 30;
+        equalsButton.Font = new System.Drawing.Font(equalsButton.Font.FontFamily, 12);
+        equalsButton.Location = new System.Drawing.Point(180, 180);
+        equalsButton.Click += EqualsButton_Click;
+        this.Controls.Add(equalsButton);
+
+        resetButton = new Button();
+        resetButton.Text = "AC";
+        resetButton.Width = 60;
+        resetButton.Height = 30;
+        resetButton.Font = new System.Drawing.Font(resetButton.Font.FontFamily, 12);
+        resetButton.Location = new System.Drawing.Point(140, 140);
+        resetButton.Click += ResetButton_Click;
+        this.Controls.Add(resetButton);
+
         resultLabel = new Label();
-        resultLabel.Location = new System.Drawing.Point(20, 140);
+        resultLabel.Location = new System.Drawing.Point(20, 20);
+        resultLabel.Size = new System.Drawing.Size(200, 50);
+        resultLabel.Font = new System.Drawing.Font(resultLabel.Font.FontFamily, 14);
+        resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         this.Controls.Add(resultLabel);
+
+        ResetCalculator();
+    }
+
+    private Button CreateNumberButton(string text)
+    {
+        var button = new Button();
+        button.Text = text;
+        button.Width = 30;
+        button.Height = 30;
+        button.Font = new System.Drawing.Font(button.Font.FontFamily, 12);
+        return button;
     }
 
     private Button CreateOperationButton(string text)
@@ -63,15 +100,47 @@ class CalculatorApp : Form
         return button;
     }
 
+    private void ResetCalculator()
+    {
+        num1Input = "";
+        num2Input = "";
+        currentOperation = "";
+        resultLabel.Text = "Enter number 1";
+    }
+
+    private void NumberButton_Click(object sender, EventArgs e)
+    {
+        Button button = (Button)sender;
+        if (currentOperation == "")
+        {
+            num1Input += button.Text;
+            resultLabel.Text = "Number 1: " + num1Input;
+        }
+        else
+        {
+            num2Input += button.Text;
+            resultLabel.Text = "Number 2: " + num2Input;
+        }
+    }
+
     private void OperationButton_Click(object sender, EventArgs e)
     {
         Button button = (Button)sender;
-        string operation = button.Text;
-        int num1 = Convert.ToInt32(num1TextBox.Text);
-        int num2 = Convert.ToInt32(num2TextBox.Text);
+        currentOperation = button.Text;
+        resultLabel.Text = "Enter number 2";
+    }
+
+    private void EqualsButton_Click(object sender, EventArgs e)
+    {
+        if (!int.TryParse(num1Input, out int num1) || !int.TryParse(num2Input, out int num2))
+        {
+            resultLabel.Text = "Invalid number input!";
+            ResetCalculator();
+            return;
+        }
 
         int result = 0;
-        switch (operation)
+        switch (currentOperation)
         {
             case "+": // Addition
                 result = num1 + num2;
@@ -90,12 +159,18 @@ class CalculatorApp : Form
                 else
                 {
                     resultLabel.Text = "Error: Cannot divide by zero.";
+                    ResetCalculator();
                     return;
                 }
                 break;
         }
 
         resultLabel.Text = "Result: " + result.ToString();
+    }
+
+    private void ResetButton_Click(object sender, EventArgs e)
+    {
+        ResetCalculator();
     }
 
     static void Main()
