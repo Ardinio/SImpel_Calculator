@@ -1,17 +1,7 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace SImpel_Calculator;
+﻿namespace SImpel_Calculator;
 
 class CalculatorApp : Form
 {
-    private Button[] numberButtons;
-    private Button addButton;
-    private Button subtractButton;
-    private Button multiplyButton;
-    private Button divideButton;
-    private Button equalsButton;
-    private Button resetButton;
     public Label resultLabel;
 
     private string num1Input;
